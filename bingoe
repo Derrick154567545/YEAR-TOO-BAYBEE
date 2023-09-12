@@ -1,0 +1,117 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Activation;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _07092023
+{
+    internal class Program
+    {
+        static Random rnd = new Random();
+        static int[] card = new int[25];
+        static int cardlevel = 0;
+        static void Main(string[] args)
+        {
+            int program = 1;
+            while (program == 1)
+            {
+                fill(card);
+                //printcard(card);
+                bningofill(card);
+                //printcard(card);
+                dupicaterepace(card);
+                printcard(card);
+                Console.WriteLine("Wanna go again?");
+                string input = Console.ReadLine();
+                if (input == "no")
+                    program = 0;
+            }
+        }
+
+        static int[] fill(int[] array)
+        {
+            for(int x= 0; x < array.Length; x++)
+            {
+                array[x] = 0;
+            }
+            return (array);
+        }
+
+        static int[] bningofill(int[] array) 
+        {
+            cardlevel = 0;
+            for (int x = 0; x < array.Length; x++)
+            {
+                int radnom = rnd.Next(1,15);
+                if (array[x] == 0)
+                {
+                    array[x] = (cardlevel*15) + radnom;
+                }
+                cardlevel = cardlevel + 1;
+                if (cardlevel > 4)
+                    cardlevel = 0;
+            }
+            return (array);
+        }
+
+        static int[] dupicateremove(int[] array)
+        {
+            for (int x = 0; x < array.Length; x++) 
+            {
+                for (int y = 0; y < array.Length; y++)
+                {
+                    if (array[y] == array[x] && x != y)
+                    {
+                        array[x] = 0;
+                    }
+                }
+            }
+            return (array);
+        }
+
+        static int[] dupicaterepace(int[] array)
+        {
+            int go = 1;
+            while(go == 1)
+            {
+                dupicateremove(array);
+                bningofill(array);
+                dupicateremove(array);
+                int zero = 0;
+                for(int x = 0; x < array.Length; x++)
+                    if (array[x] == 0)
+                        zero++;
+                if (zero == 0)
+                    go = 0;
+                //Console.WriteLine("XEROES " + zero);
+            }
+            return (array);
+        }
+
+        static void printcard(int[] array)
+        {
+            Console.WriteLine("B  I  N  G  O");
+            cardlevel = 0;
+            //for(int x = array.Length - 1; x >= 0; x--)
+            for (int x = 0; x < array.Length; x++) 
+            {
+                cardlevel = cardlevel + 1;
+                if (cardlevel > 5)
+                {
+                    Console.WriteLine(" ");
+                    cardlevel = 1;
+                }
+                if(x == 12)
+                {
+                    Console.Write("F  ");
+                    continue;
+                }
+                Console.Write(array[x] + "  ");
+            }
+            Console.WriteLine(" ");
+        }
+    }
+}
