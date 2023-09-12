@@ -1,0 +1,105 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _05092023
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            historycheck();
+            string hmm = getthang();
+            Console.WriteLine(hmm);
+            Console.ReadKey();
+        }
+
+        static string getthang()
+        {
+            int getting = 1;
+            string numbers = "0123456789";
+            string operation = "+-*/";
+            string space = "  ";
+            string input = "";
+            while (getting == 1)
+            {
+                string inputt = Console.ReadLine();
+                int operatorlimit = 0;
+                
+                //SPACECHECK
+                string inpeet = "";
+                for(int x = 0; x < inputt.Length; x++) 
+                {
+                    if (inputt[x] == space[0])
+                    {
+                        break;
+                    }
+                    inpeet = inpeet + inputt[x];
+                }
+                inputt = inpeet;
+
+                int correctnums = 0;
+
+                for(int x = 0; x < inputt.Length; x++) 
+                {
+                    for(int y = 0; y < numbers.Length; y++) 
+                    {
+                        if (inputt[x] == numbers[y])
+                        {
+                            correctnums = correctnums + 1;
+                        }
+                    }
+                    for (int y = 0; y < operation.Length; y++)
+                    {
+                        if (inputt[x] == operation[y])
+                        {
+                            correctnums = correctnums + 1;
+                            operatorlimit = operatorlimit + 1;
+                        }
+                    }
+                }
+                if (correctnums == inputt.Length)
+                {
+                    getting = 0;
+                    input = inputt;
+                }
+                else
+                {
+                    getting = 1;
+                    Console.WriteLine("Do again");
+                }
+                if(operatorlimit > 1)
+                {
+                    getting = 1;
+                    Console.WriteLine("Do Again");
+                }
+            }
+            return (input);
+        }
+
+       static string operating (string input)
+        {
+            //Separate
+
+
+            return "ogh";
+        }
+
+        static void historycheck()
+        {
+            if (!File.Exists("C:\\Users\\22-0354C\\Downloads\\tyutfui\\HistoryAbabagoo.txt"))
+            {
+                using (StreamWriter sw = new StreamWriter("C:\\Users\\22-0354C\\Downloads\\tyutfui\\HistoryAbabagoo.txt"))
+                {
+                }
+                Console.WriteLine("Making the history because it wasnt there"); //DEBUGGING
+            }
+            else
+                Console.WriteLine("history is already here"); //DEBUGGING
+        }
+    }
+}
