@@ -1,0 +1,148 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Permissions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace hiiii
+{
+    internal class Program
+    {
+        static string[] board = new string[9];
+
+        static void Main(string[] args)
+        {
+            int program = 1;
+            while(program == 1)
+            {
+                boardinitialize(board);
+                boarddisplay(board);
+                boardadd(playerinput(), "X", board);
+                int win = wincheck(board);
+                if (win == 1)
+                    Console.WriteLine("Somebody Won!!!");
+            }
+        }
+
+        static string[] boardinitialize(string[] board)
+        {
+            for (int x = 0; x < board.Length; x++)
+            {
+                if (board[x] == null)
+                {
+                    board[x] = " ";
+                }
+            }
+            return board;
+        }
+
+        static void boarddisplay(string[] board)
+        {
+            int three = 0;
+            for (int x = 0; x < board.Length; x++)
+            {
+                if(three == 3)
+                {
+                    three = 0;
+                    Console.WriteLine(" ");
+                }
+                //Console.Write(board[x] + " ");
+                if (board[x] == " ")
+                {
+                    Console.Write((x + 1) + " ");
+                }
+                else
+                {
+                    Console.Write(board[x] + " ");
+                }
+                three++;
+            }
+        }
+
+        static int inputanum()
+        {
+            int program = 1;
+            int n = 0;
+            while (program == 1) 
+            {
+                Console.WriteLine("ENTER YOUR NUMBER");
+                string inputt = Console.ReadLine();
+                program = 0;
+                try
+                {
+                    n = int.Parse(inputt);
+                }
+                catch
+                {
+                    Console.WriteLine("INVALID TRY AGAIN");
+                    program = 1;
+                }
+            }
+            return n;
+        }
+
+        static int playerinput()
+        {
+            int program = 1;
+            int x = 0;
+            while(program == 1)
+            {
+                program = 0;
+                x = inputanum();
+                if(x <= 0 || x > 9)
+                {
+                    Console.WriteLine("PLEASE INPUT A NUM FROM 1 TO 9");
+                    program = 1;
+                }
+            }
+            return x - 1;
+        }
+
+        static string[] boardadd(int input, string character, string[] board)
+        {
+            if (board[input] == " ")
+            {
+                board[input] = character;
+            }
+            return board;
+        }
+
+        static int wincheck(string[] board)
+        {
+            int win = 0;
+            int[,] wincombos = { { 0, 1, 2 } , { 3, 4, 5 } , { 6, 7, 8 } };
+            for(int x = 0; x < wincombos.Length; x++)
+            {
+                int wincon = 0;
+                //for (int y = 0; y < wincombos[x,y]; y++)
+                //{
+
+                //if (board[wincombos[x,0]] == board[wincombos[x,1]])
+                //wincon = wincon + 1;
+                //}
+                //CHECKS THE WIN
+                if (board[wincombos[x, 0]] == board[wincombos[x, 1]])
+                    wincon = wincon + 1;
+                if (board[wincombos[x, 1]] == board[wincombos[x, 2]])
+                    wincon = wincon + 1;
+                if (board[wincombos[x, 0]] == board[wincombos[x, 2]])
+                    wincon = wincon + 1;
+                //CHECKS THE " "
+                //if (board[wincombos[x, 0]] == " ")
+                //    wincon = 0;
+                //if (board[wincombos[x, 1]] == " ")
+                //    wincon = 0;
+                //if (board[wincombos[x, 2]] == " ")
+                //    wincon = 0;
+                if (wincon == 3)
+                {
+                    win = 1;
+                    break;
+                }
+            }
+            return win;
+        }
+
+    }
+}
