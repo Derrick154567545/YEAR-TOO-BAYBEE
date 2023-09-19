@@ -1,0 +1,406 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Permissions;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace hiiii
+{
+    internal class Program
+    {
+        static string[] board = new string[9];
+
+        static void Main(string[] args)
+        {
+            game();
+        }
+
+        static void game()
+        {
+            int program = 1;
+            while (program == 1)
+            {
+                Console.WriteLine("Start new game");
+                board = new string[9]; //hmm
+                boardinitialize(board);
+                boarddisplay(board);
+                int game = 1;
+                while (game == 1)
+                {
+                    string turn = "";
+
+                    turn = "YOU";
+                    Console.WriteLine("");
+                    Console.WriteLine(turn + " TURN:");
+                    boardadd(playerinput(), "D", board);
+                    //boardadd(randomopp(board), "D", board);
+                    boarddisplay(board);
+                    if (wincheck(board) == 1)
+                    {
+                        Console.WriteLine(turn + " Won!!!");
+                        game = 0;
+                        break;
+                    }
+                    if (wincheck(board) == 2)
+                    {
+                        Console.WriteLine("TIE!!!!");
+                        game = 0;
+                        break;
+                    }
+
+
+                    turn = "AIRA";
+                    Console.WriteLine("");
+                    Console.WriteLine(turn + " TURN:");
+                    boardadd(randomopp(board), "M", board);
+                    //boardadd(thinker(board, "D", "M"), "M", board);
+                    boarddisplay(board);
+                    if (wincheck(board) == 1)
+                    {
+                        Console.WriteLine(turn + " Won!!!");
+                        game = 0;
+                        break;
+                    }
+                    if (wincheck(board) == 2)
+                    {
+                        Console.WriteLine("TIE!!!!");
+                        game = 0;
+                        break;
+                    }
+                    //Console.ReadKey();
+                }
+                Console.WriteLine("Wanna go again?");
+                Console.ReadKey();
+            }
+        }
+
+        static string[] boardinitialize(string[] board)
+        {
+            for (int x = 0; x < board.Length; x++)
+            {
+                if (board[x] == null)
+                {
+                    board[x] = " ";
+                }
+            }
+            return board;
+        }
+
+        static void boarddisplay(string[] board)
+        {
+            int three = 0;
+            for (int x = 0; x < board.Length; x++)
+            {
+                if (three == 1 || three == 2)
+                    Console.Write(" | ");
+                if (three == 3)
+                {
+                    three = 0;
+                    Console.WriteLine(" ");
+                    Console.WriteLine("-----------------");
+                }
+                //Console.Write(board[x] + " ");
+                if (board[x] == " ")
+                {
+                    Console.Write(" " + (x + 1) + " ");
+                }
+                else
+                {
+                    Console.Write(" " + board[x] + " ");
+                }
+                three++;
+            }
+
+            //DEBUGGING
+            Console.WriteLine("");
+            for (int x = 0; x < board.Length; x++)
+                Console.Write(board[x] + ", ");
+        }
+
+        static int inputanum()
+        {
+            int program = 1;
+            int n = 0;
+            while (program == 1)
+            {
+                Console.WriteLine("ENTER YOUR NUMBER");
+                string inputt = Console.ReadLine();
+                program = 0;
+                try
+                {
+                    n = int.Parse(inputt);
+                }
+                catch
+                {
+                    Console.WriteLine("INVALID TRY AGAIN");
+                    program = 1;
+                }
+            }
+            return n;
+        }
+
+        static int playerinput()
+        {
+            int program = 1;
+            int x = 0;
+            while (program == 1)
+            {
+                program = 0;
+                x = inputanum();
+                if (x <= 0 || x > 9)
+                {
+                    Console.WriteLine("PLEASE INPUT A NUM FROM 1 TO 9");
+                    program = 1;
+                }
+            }
+            return x - 1;
+        }
+
+        static string[] boardadd(int input, string character, string[] board)
+        {
+            if (board[input] == " ")
+            {
+                board[input] = character;
+            }
+            return board;
+        }
+
+        static int wincheck(string[] board)
+        {
+            int win = 0;
+            int[,] wincombos = { { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 } , { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 }, { 0, 4, 8 }, { 2, 4, 6 } };
+            //Console.WriteLine(wincombos.Length); //WHY IS IT LIKE THIS
+            //for (int x = 0; x < wincombos.Length - 1; x++)
+            for (int x = 0; x < 8; x++)
+            {
+                int wincon = 0;
+
+                if (board[wincombos[x, 0]] == board[wincombos[x, 1]] && board[wincombos[x, 0]] != " ")
+                    wincon = wincon + 1;
+                if (board[wincombos[x, 1]] == board[wincombos[x, 2]] && board[wincombos[x, 1]] != " ")
+                    wincon = wincon + 1;
+                if (board[wincombos[x, 0]] == board[wincombos[x, 2]] && board[wincombos[x, 0]] != " ")
+                    wincon = wincon + 1;
+                if (board[wincombos[x, 0]] == board[wincombos[x, 1]] && board[wincombos[x, 1]] != " ")
+                    wincon = wincon + 1;
+                if (board[wincombos[x, 1]] == board[wincombos[x, 2]] && board[wincombos[x, 2]] != " ")
+                    wincon = wincon + 1;
+                if (board[wincombos[x, 0]] == board[wincombos[x, 2]] && board[wincombos[x, 2]] != " ")
+                    wincon = wincon + 1;
+
+                //Ties
+                int tiecon = 0;
+                for (int tc = 0; tc < board.Length; tc++)
+                {
+                    if (board[tc] != " ")
+                        tiecon = tiecon + 1;
+                }
+                if (tiecon == 9)
+                {
+                    win = 2;
+                    //break;
+                }
+
+                if (wincon == 6)
+                {
+                    win = 1;
+                    break;
+                }
+
+            }
+            return win;
+        }
+
+        static int randomopp(string[] board)
+        {
+            int program = 1;
+            Random r = new Random();
+            int x = 0;
+            while (program == 1)
+            {
+                program = 0;
+                x = r.Next(0, board.Length);
+                if (board[x] != " ")
+                    program = 1;
+            }
+            //Console.WriteLine("WHYNOECKS " + x);
+            return x;
+        }
+
+
+        static int thinker(string[] board, string player, string terminator)
+        {
+            string[] mindboard = new string[9];
+            for (int tf = 0; tf < board.Length; tf++)
+                mindboard[tf] = board[tf];
+
+            List<int> possiblemoves = new List<int>();
+            for (int tf = 0; tf < mindboard.Length; tf++)
+                if (mindboard[tf] == " ")
+                    possiblemoves.Add(tf);
+
+            //Console.WriteLine("DEBOOGING MINDBOARD");
+            //for (int tf = 0; tf < board.Length; tf++)
+            //{
+            //    Console.Write(mindboard[tf] + ", ");
+            //}
+            //Console.WriteLine("DEBOOGING POSSIBLEMOVES");
+            //for (int tf = 0; tf < possiblemoves.Count; tf++)
+            //{
+            //    Console.Write(possiblemoves[tf] + ", ");
+            //}
+
+            List<int> possiblemovescore = new List<int>();
+
+            for(int p = 0; p < possiblemoves.Count; p++)
+            {
+                string[] mindboard2 = new string[9];
+                for (int tf = 0; tf < board.Length; tf++)
+                    mindboard2[tf] = board[tf];
+                mindboard2[possiblemoves[p]] = terminator;
+                possiblemovescore.Add(thinking(mindboard2, player, terminator, "OPP", 1, 0)); //ME OR OPP prob ME prob OPP
+            }
+
+            //DEBOOGING THE SCORECHECKING
+            Console.WriteLine("Possible moves");
+            for (int p = 0; p < possiblemoves.Count; p++)
+            {
+                Console.Write(possiblemoves[p] + ", ");
+            }
+            Console.WriteLine("Possible movescore");
+            for (int p = 0; p < possiblemovescore.Count; p++)
+            {
+                Console.Write(possiblemovescore[p] + ", ");
+            }
+            Console.WriteLine("");
+
+            int maxscore = -9999;
+            int printx = -1;
+            for (int pl = 0; pl < possiblemovescore.Count; pl++)
+            {
+                if (possiblemovescore[pl] > maxscore)
+                {
+                    maxscore = possiblemovescore[pl];
+                    printx = possiblemoves[pl];
+                }
+            }
+            return printx;
+
+        }
+
+        static int thinking(string[] board, string player, string terminator, string turn, int depth, int score)
+        {
+            //Console.WriteLine("1");
+            if (wincheck(board) == 1 && turn == "ME")
+                return 10 - depth;
+            //Console.WriteLine("2");
+            if (wincheck(board) == 1 && turn == "OPP")
+                return depth - 10;
+            //this is so that it doesnt theoretically keep looping after a tie
+            if (wincheck(board) == 2 && turn == "ME")
+                return 10 - depth;
+            //Console.WriteLine("11");
+            if (wincheck(board) == 2 && turn == "OPP")
+                return depth - 10;
+            //Console.WriteLine("22");
+            //Console.WriteLine("3: looks like scores are unchecked");
+            if (wincheck(board) == 0)
+                Console.WriteLine("We are confirminf that scores are unchecked and we are at depth: " + depth);
+
+            string nextturn = "";
+            string nextchar = "";
+
+
+            if (turn == "ME")
+            {
+                nextturn = "OPP";
+                nextchar = terminator; //nextchar is player or terminator?
+            }
+            if (turn == "OPP")
+            {
+                nextturn = "ME";
+                nextchar = player;
+            }
+
+
+            string[] mindboard = new string[9];
+            for (int tf = 0; tf < board.Length; tf++)
+                mindboard[tf] = board[tf];
+
+            List<int> possiblemoves = new List<int>();
+            for (int tf = 0; tf < mindboard.Length; tf++)
+                if (mindboard[tf] == " ")
+                    possiblemoves.Add(tf);
+
+
+            List<int> possiblemovescore = new List<int>();
+
+            for (int p = 0; p < possiblemoves.Count; p++)
+            {
+                string[] mindboard2 = new string[9];
+                for (int tf = 0; tf < board.Length; tf++)
+                    mindboard2[tf] = board[tf];
+                mindboard2[possiblemoves[p]] = nextchar; //oh im SOO stupid, there cant be a nextchar theres only a currentchar
+                Console.WriteLine("possiblemoves p: " + p + " possiblemovescount: " + possiblemoves.Count);
+                possiblemovescore.Add(thinking(mindboard2, player, terminator, nextturn, depth + 1, 0));
+            }
+
+            int minscore = 9999;
+            int maxscore = -9999;
+            for(int pl= 0; pl < possiblemovescore.Count; pl ++)
+            {
+                if (possiblemovescore[pl] < minscore)
+                    minscore = possiblemovescore[pl];
+                if (possiblemovescore[pl] > maxscore)
+                    maxscore = possiblemovescore[pl];
+            }
+
+            if (turn == "ME")
+                return maxscore; //MINSCORE OR MAXSCORE
+            if (turn == "OPP")
+                return minscore;
+
+
+            //the scorechecker
+            //if score unchecked, check possible moves and get the scores
+            //determine if to get min or max based on whose turn it is, and then decide the output
+            //a "next turn" variable
+            //the last return is the result of the depth of thinking???
+            int x = -999; //GET RID LATER, STILL THINKING
+            Console.WriteLine("umm this happened");
+            return x;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        static int score(string[] board, int depth, string turn)
+        {
+            Console.WriteLine("1");
+            if (wincheck(board) == 1 && turn == "ME")
+                return 10 - depth;
+            Console.WriteLine("2");
+            if (wincheck(board) == 1 && turn == "OPP")
+                return depth - 10;
+            //this is so that it doesnt theoretically keep looping after a tie
+            if(wincheck(board) == 2 && turn == "ME")
+                return 10 - depth;
+            Console.WriteLine("11");
+            if (wincheck(board) == 2 && turn == "OPP")
+                return depth - 10;
+            Console.WriteLine("22");
+            Console.WriteLine("3");
+            return 0;
+        }
+
+    }
+}
