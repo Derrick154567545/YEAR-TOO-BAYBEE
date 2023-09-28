@@ -1,0 +1,198 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Remoting.Contexts;
+using System.Runtime.Remoting.Messaging;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+using static System.Net.WebRequestMethods;
+
+namespace shizashyfer
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            notthemain();
+            Console.ReadKey();
+        }
+        static void notthemain()
+        {
+            string whado = getdore();
+            Console.WriteLine("input the key");
+            string key = specialcharacterclean(Console.ReadLine());
+            string filename = "C:/Users/22-0354c/Downloads/Encryp.txt";
+            if (whado == "e")
+            {
+                Console.WriteLine("input what you wanna encrypt");
+                string toencrypt = (Console.ReadLine());
+                toencrypt = toencrypt.ToLower();
+                string output = (encryptordecrypt(toencrypt, makecypher(key), "ENCRYPT"));
+                output = output.ToUpper();
+                Console.WriteLine(output);
+                print(output, filename);
+            }
+            if (whado == "d")
+            {
+                //string output = (encryptordecrypt(Console.ReadLine(), makecypher(key), "DECRYPT"));
+                //string output = (encryptordecrypt(read(filename), makecypher(key), "DECRYPT"));
+                string toencrypt = (Console.ReadLine());
+                toencrypt = toencrypt.ToLower();
+                string output = (encryptordecrypt(toencrypt, makecypher(key), "DECRYPT"));
+                Console.WriteLine("This is the decrypted thing:");
+                Console.WriteLine(output.ToUpper());
+            }
+        }
+
+        static string getdore()
+        {
+            int program = 1;
+            while (program == 1)
+            {
+                Console.WriteLine("You want to Decrypt (D) or Encrypt (E)?");
+                string inp = Console.ReadLine();
+                inp = inp.ToLower();
+                if (inp == "d" || inp == "e")
+                {
+                    program = 0;
+                    return inp;
+                }
+                else
+                    Console.WriteLine("Wrong input");
+            }
+            return ("WHY");
+        }
+
+        static string specialcharacterclean(string s)
+        {
+            string finish = "";
+            string lowercasealphabet = "abcdefghijklmnopqrstuvwxyz";
+            string capitalalphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for(int i = 0; i < s.Length; i++)
+            {
+                int add = 0;
+                for (int j = 0; j < lowercasealphabet.Length; j++)
+                    if (s[i] == lowercasealphabet[j] || s[i] == capitalalphabet[j])
+                        add = 1;
+                if(add == 1)
+                    finish = finish + s[i];
+            }
+            return finish;
+        }
+        static List<string> makecypher(string keyo)
+        {
+            //string key = "APPLE";
+            string key = keyo;
+            key = (key.ToLower());
+            string alphabet = "abcdefghijklmnopqrstuvwxyz";
+            List<string> tebahpla = new List<string>();
+            List<string> alphabet2 = new List<string>();
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                alphabet2.Add(chartostring(alphabet[i]));
+            }
+
+            for (int i = 0; i < key.Length; i++)
+            {
+                string keyletter = chartostring(key[i]);
+                int add = 1;
+                for (int j = 0; j < tebahpla.Count; j++)
+                {
+                    if (tebahpla[j] == keyletter)
+                    {
+                        add = 0;
+                    }
+                }
+                if (add == 1)
+                {
+                    tebahpla.Add(keyletter);
+                }
+            }
+            //for (int i = 0; i < tebahpla.Count; i++)
+            //Console.WriteLine(tebahpla[i]);
+            for (int i = 0; i < alphabet.Length; i++)
+            {
+                string addletter = chartostring(alphabet[i]);
+                int add = 1;
+                for (int j = 0; j < tebahpla.Count; j++)
+                {
+                    if (tebahpla[j] == addletter)
+                    {
+                        add = 0;
+                    }
+                }
+                if (add == 1)
+                {
+                    tebahpla.Add(addletter);
+                }
+            }
+            //for (int i = 0; i < tebahpla.Count; i++)
+            //Console.WriteLine(tebahpla[i]);
+            //if (alphabet2.Count == tebahpla.Count)
+            //Console.WriteLine("SUCCESS");
+            return tebahpla;
+        }
+
+        static string chartostring(char ch)
+        {
+            string x = "";
+            x = char.ToString(ch);
+            return x;
+        }
+
+        static string encryptordecrypt(string text, List<String> key, string whatdo)
+        {
+            string alphabet = "abcdefghijklmnopqrstuvwxyz";
+            string finish = "";
+            for (int i = 0; i < text.Length; i++)
+            {
+                //fix for symbols
+                int symbol = 0;
+                for (int j = 0; j < alphabet.Length; j++)
+                    if (text[i] == alphabet[j])
+                        symbol = 1;
+                if(symbol == 0)
+                    finish = finish + text[i];
+                int somereasonskip = 0; //no idea why this is needed
+                for (int j = 0; j < key.Count; j++)
+                {
+                    if (chartostring(text[i]) == " " && somereasonskip == 0)
+                    {
+                        finish = finish + " ";
+                        somereasonskip = 1;
+                    }
+                    if (text[i] == alphabet[j] && whatdo == "ENCRYPT")
+                        finish = finish + key[j];
+                    if (chartostring(text[i]) == key[j] && whatdo == "DECRYPT")
+                        finish = finish + alphabet[j];
+                }
+            }
+            //Console.WriteLine(finish);
+            return finish;
+        }
+
+        static void print(string text, string filename)
+        {
+            using (StreamWriter sw = new StreamWriter(filename))
+            {
+                sw.WriteLine(text);
+            }
+        }
+
+        static string read(string filename)
+        {
+            string line = " ";
+            string lineget = "";
+            using (StreamReader sr = new StreamReader(filename))
+            {
+                while ((line = sr.ReadLine()) != null)
+                {
+                    lineget = lineget + line;
+                }
+            }
+            return lineget;
+        }
+    }
+}
