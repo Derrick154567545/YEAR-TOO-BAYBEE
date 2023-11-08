@@ -1,0 +1,150 @@
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace hrose
+{
+    internal class hrosne
+    {
+        int position = 0;
+        string name = "";
+        string special = "";
+        string color = "";
+        string specialstate = "";
+        int secondsinstoppedtime = 0;
+        public static Random rand = new Random();
+
+        public hrosne(string inpname, string inpspecial, string inpcolor)
+        {
+            name = inpname;
+            special = inpspecial;
+            color = inpcolor;
+        }
+
+        public int getpos()
+        {
+            return position;
+        }
+
+        public string[] getname()
+        {
+            string[] hoong = { name, special, color, specialstate };
+            return hoong;
+        }
+
+        public void horsedo()
+        {
+            if (special == "" && specialstate == "")
+            {
+                horserun();
+            }
+            if (special == "Diego Brando" && specialstate == "")
+            {
+                horserun();
+                TheWorld();
+            }
+            if (special == "Diego Brando" && specialstate == "Walking through frozen time")
+            {
+                horserun();
+                MovingInFrozenTime();
+            }
+            if (special == "roided" && specialstate == "")
+            {
+                roidhorserun();
+            }
+            if (special == "threelegged" && specialstate != "RIP")
+            {
+                threeleggedhorserun();
+            }
+        }
+
+        private void horserun()
+        {
+            int move = rand.Next(0, 100);
+            if (move > 0 && move < 75)
+                forward();
+            if (move > 76 && move < 99)
+                no();
+            if (position < 0)
+                position = 0;
+        }
+
+        private void forward()
+        {
+            int coin = rand.Next(0, 100);
+            if (coin > 0 && coin < 75)
+                position = position + 1;
+            if (coin > 76 && coin < 99)
+                position = position + 2;
+        }
+
+        private void no()
+        {
+            int coin = rand.Next(0, 100);
+            if (coin > 0 && coin < 75)
+                position = position - 1;
+            if (coin > 76 && coin < 99)
+                position = position - 2;
+        }
+
+        private void roidhorserun()
+        {
+            int move = rand.Next(0, 100);
+            if (move > 0 && move < 75)
+                forward();
+            if (position < 0)
+                position = 0;
+            int consequences = rand.Next(0, 150);
+            if (consequences == 2)
+                    specialstate = "DiedFromSteroidUse";
+        }
+
+        public void specialqualityupdate(string circumstances)
+        {
+            if (circumstances == "rip")
+                specialstate = "RIP";
+            if (circumstances == "Begging")
+                specialstate = "Begging";
+            if (circumstances == "Walking through frozen time")
+                specialstate = "Walking through frozen time";
+            if (circumstances == "Frozen in time")
+                specialstate = "Frozen in time";
+            if (circumstances == "normalize")
+                specialstate = "";
+        }
+
+        private void threeleggedhorserun()
+        {
+            int move = rand.Next(0, 100);
+            if (move > 0 && move < 10)
+                forward();
+            if (position < 0)
+                position = 0;
+            int consequences = rand.Next(0, 101);
+            if (consequences == 2 && specialstate == "")
+                specialstate = "Pitiful";
+            if (consequences == 4 && specialstate == "Begging")
+                specialstate = "PutOutOfItsMisery";
+        }
+
+        private void TheWorld()
+        {
+            int activate = rand.Next(0, 50);
+            if (activate == 5)
+                specialstate = "ZA WARUDO";
+        }
+
+        private void MovingInFrozenTime()
+        {
+            secondsinstoppedtime = secondsinstoppedtime + 1;
+            if(secondsinstoppedtime == 10)
+            {
+                specialstate = "Time is no longer frozen";
+                secondsinstoppedtime = 0;
+            }
+        }
+    }
+}
