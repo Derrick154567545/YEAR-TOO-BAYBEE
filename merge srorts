@@ -1,0 +1,328 @@
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Schema;
+using static System.Net.Mime.MediaTypeNames;
+
+namespace xnumbers
+{
+    internal class Program
+    {
+        //static List<int> dalist = CSVReader(MakeCSVFile("C:/Users/22-0354c/Downloads/Teest.csv", 0, 70, 70), 0);
+        //static List<int> dalist = new List<int>();
+
+        //static List<int> dalist = CSVReader(MakeCSVFile("C:/Users/22-0354c/Downloads/Teest.csv", 0, 1000000, 1000000), 0);
+
+        static void Main(string[] args)
+        {
+            //Console.WriteLine(printlist(horngy(dalist, 0, 0, 0)));
+            List<int> dalist = GenerateRandomIntegers(100, 100);
+            //dalist.Add(38); dalist.Add(27); dalist.Add(43); dalist.Add(3); dalist.Add(9); dalist.Add(82); dalist.Add(10);
+            Console.WriteLine("startup");
+            int getaord = 1;
+            int sortby = 0;
+            while (getaord == 1)
+            {
+                Console.WriteLine("Ascending or Descending? ");
+                string input = (Console.ReadLine());
+                input = input.ToUpper();
+                if (input == "A")
+                {
+                    getaord = 0;
+                    sortby = 1;
+                }
+                if (input == "D")
+                {
+                    getaord = 0;
+                    sortby = 0;
+                }
+            }
+            List<int> dasortedlist = horngy(dalist, sortby, 0, 1);
+            Console.WriteLine("This is the sorted list");
+            for (int i = 0; i < dasortedlist.Count; i++)
+                Console.Write(dasortedlist[i] + " ");
+            Console.WriteLine("Done");
+            Console.ReadKey();
+        }
+
+        static List<int> horngy(List<int> list, int sortby, int depth, int debug)
+        {
+            List<int> output = new List<int>();
+            if (debug == 1)
+                Console.WriteLine("Started at this depth of: " + depth);
+            if (list.Count == 1)
+            {
+                if (debug == 1)
+                    Console.WriteLine("Returning this: " + printlist(list));
+                return list;
+            }
+            if (list.Count == 2)
+            {
+                if (debug == 1)
+                    Console.WriteLine("Sorted this: " + printlist(list) + " into this " + printlist(sortlistof2(list, sortby)));
+                return sortlistof2(list, sortby);
+            }
+            if (list.Count > 2)
+            {
+
+                List<int>[] outputt = splitlist(list);
+
+                if (debug == 1)
+                { Console.WriteLine("First Split: " + printlist(outputt[0])); Console.WriteLine("Second Split: " + printlist(outputt[1])); }
+
+                List<int> ferst = horngy(outputt[0], sortby, depth + 1, debug);
+                List<int> socanst = horngy(outputt[1], sortby, depth + 1, debug);
+
+                if (debug == 1)
+                { Console.WriteLine("First split list sorted: " + printlist(ferst)); Console.WriteLine("Second split list sorted:  " + printlist(socanst)); }
+
+                output = cocksort2(ferst, socanst, sortby);
+
+                if (debug == 1)
+                { Console.WriteLine("Merged and Sorted the two lists:  " + printlist(output)); Console.WriteLine("Finished at this depth of: " + depth); }
+            }
+            return output;
+        }
+
+        static List<int> sortlistof2(List<int> list, int sortby)
+        {
+            List<int> result = new List<int>();
+            if (sortby == 0)
+            {
+                if (list[0] > list[1])
+                {
+                    result.Add(list[0]);
+                    result.Add(list[1]);
+                }
+                if (list[0] < list[1])
+                {
+                    result.Add(list[1]);
+                    result.Add(list[0]);
+                }
+                if (list[0] == list[1])
+                {
+                    result.Add(list[1]);
+                    result.Add(list[0]);
+                }
+            }
+            if (sortby == 1)
+            {
+                if (list[0] > list[1])
+                {
+                    result.Add(list[1]);
+                    result.Add(list[0]);
+                }
+                if (list[0] < list[1])
+                {
+                    result.Add(list[0]);
+                    result.Add(list[1]);
+                }
+                if (list[0] == list[1])
+                {
+                    result.Add(list[1]);
+                    result.Add(list[0]);
+                }
+            }
+            return result;
+        }
+
+        static List<int> cocksort2(List<int> listone, List<int> listtwo, int sortby)
+        {
+            string sortOrder = "";
+            if (sortby == 0)
+                sortOrder = "desc";
+            if (sortby == 1)
+                sortOrder = "asc";
+            List<int> nulist = addlistint(listone, listtwo);
+            return (CocktailSort(nulist, sortOrder));
+        }
+
+        static List<int> CocktailSort(List<int> list, string sortOrder)
+        {
+            bool swapped;
+
+            do
+            {
+                swapped = false;
+
+                for (int i = 0; i <= list.Count - 2; i++)
+                {
+                    if ((sortOrder == "asc" && list[i] > list[i + 1]) ||
+                     (sortOrder == "desc" && list[i] < list[i + 1]))
+                    {
+                        Swap(list, i, i + 1);
+                        swapped = true;
+                    }
+                }
+
+                if (!swapped)
+                    break;
+
+                swapped = false;
+
+                for (int i = list.Count - 2; i >= 0; i--)
+                {
+                    if ((sortOrder == "asc" && list[i] > list[i + 1]) ||
+                     (sortOrder == "desc" && list[i] < list[i + 1]))
+                    {
+                        Swap(list, i, i + 1);
+                        swapped = true;
+                    }
+                }
+
+            } while (swapped);
+
+            return list;
+        }
+
+        static void Swap(List<int> list, int i, int j)
+        {
+            int temp = list[i];
+            list[i] = list[j];
+            list[j] = temp;
+        }
+
+        static List<int>[] splitlist(List<int> list)
+        {
+            List<int> firsthalf = new List<int>();
+            List<int> secondhalf = new List<int>();
+            int gagog = list.Count % 2;
+            int gogag = list.Count / 2;
+            int firsthalflength = gogag + gagog;
+            int secondhalflength = list.Count - firsthalflength;
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (firsthalf.Count < firsthalflength)
+                {
+                    firsthalf.Add(list[i]);
+                }
+                else if (firsthalf.Count == firsthalflength)
+                {
+                    secondhalf.Add(list[i]);
+                }
+            }
+            List<int>[] output = { firsthalf, secondhalf };
+            return output;
+        }
+
+        static string printlist(List<int> list)
+        {
+            string output = "";
+            for (int i = 0; i < list.Count; i++)
+            {
+                output = output + list[i];
+                output = output + " ";
+            }
+            return output;
+        }
+
+        static List<int> addlistint(List<int> list, List<int> toadd)
+        {
+            for (int i = 0; i < toadd.Count; i++)
+            {
+                list.Add(toadd[i]);
+            }
+            return list;
+        }
+
+        static List<int> GenerateRandomIntegers(int length, int limit)
+        {
+            List<int> randomIntegers = new List<int>();
+            Random random = new Random();
+
+            for (int i = 0; i < length; i++)
+            {
+                randomIntegers.Add(random.Next(limit));
+            }
+
+            return randomIntegers;
+        }
+
+        static string MakeCSVFile(string filename, int addornot, int length, int limit)
+        {
+            List<int> randomIntegers = GenerateRandomIntegers(length, limit);
+            bool addcheck = false;
+            if (addornot == 1)
+                addcheck = true;
+            using (StreamWriter sw = new StreamWriter(filename, addcheck))
+            {
+                for (int i = 0; i < randomIntegers.Count; i++)
+                {
+                    sw.Write(randomIntegers[i]);
+                    sw.Write(',');
+                }
+            }
+            return filename;
+        }
+
+        static List<int> CSVReader(string filename, int debug)
+        {
+            List<int> nooms = new List<int>();
+            string line = " ";
+            string lineget = "";
+            using (StreamReader sr = new StreamReader(filename))
+            {
+                while ((line = sr.ReadLine()) != null)
+                {
+                    lineget = lineget + line;
+                    lineget = lineget + ",";
+                }
+            }
+            //int.Parse(string)
+            string[] nums = lineget.Split(',');
+            List<string> nonvalids = new List<string>();
+            for (int i = 0; i < nums.Length; i++)
+            {
+                string question = numchecker(nums[i]);
+                if (question == "NOT")
+                {
+                    nonvalids.Add(nums[i]);
+                }
+                if (question == "NUMBER")
+                {
+                    nooms.Add(int.Parse(nums[i]));
+                }
+            }
+            if (debug == 1)
+            {
+                Console.WriteLine("NONVALID COUNT: " + nonvalids.Count);
+                for (int i = 0; i < nonvalids.Count; i++)
+                {
+                    Console.WriteLine("-" + nonvalids[i] + "-");
+                }
+            }
+            return nooms;
+        }
+
+        static string numchecker(string inp)
+        {
+            if (inp == "")
+                return "NOT";
+            string numbers = "0123456789";
+            int noombers = 0;
+            for (int i = 0; i <= inp.Length - 1; i++)
+            {
+                for (int j = 0; j < numbers.Length; j++)
+                {
+                    if (inp[i] == numbers[j])
+                        noombers = noombers + 1;
+                }
+            }
+            if (noombers == inp.Length)
+                return "NUMBER";
+            else
+                return "NOT";
+        }
+
+    }
+}
+
+
